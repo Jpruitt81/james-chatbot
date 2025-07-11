@@ -1,38 +1,72 @@
-// Firebase setup
-import { useState, useEffect, useRef } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+// ChatBotJames.jsx
+import { useState } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyDrIe9iLDu5YF9uwRKktIVfrZ3LxetBqgU",
-  authDomain: "project-james-e07c9.firebaseapp.com",
-  projectId: "project-james-e07c9",
-  storageBucket: "project-james-e07c9.firebasestorage.app",
-  messagingSenderId: "149150094527",
-  appId: "1:149150094527:web:0872e6a611e3228919620a",
-  measurementId: "G-7H9F1CY0TV"
+const conversationStarters = [
+  "I'm feeling alone",
+  "Give me a daily affirmation",
+  "Do you have a journal prompt?",
+  "I need help calming down",
+  "Say something encouraging"
+];
+
+const responses = {
+  alone: "I'm here with you. You are not alone, even if it feels that way right now. It's okay to feel what you're feeling.",
+  affirmation: "You are enough. You are worthy of love and peace. Breathe and remind yourself of your strength.",
+  journal: "Write about a moment today that made you feel something deeply. Why did it move you?",
+  breathe: "Let's take a deep breath together. Inhale slowly through your nose for 4 counts... hold... and exhale through your mouth for 6 counts.",
+  encouragement: "You're doing better than you think. Keep going, one step at a time. You matter."
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export default function ChatBotJames() {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
 
-// Main component
-function ChatBotJames() {
-  // Your chatbot logic goes here...
+  const handleUserMessage = (text) => {
+    const trimmed = text.trim().toLowerCase();
+    const match = Object.keys(responses).find(key => trimmed.includes(key)) || "encouragement";
+    const reply = responses[match];
+
+    setMessages(prev => [...prev, { from: "user", text }, { from: "bot", text: reply }]);
+    setInput("");
+  };
+
   return (
-    <Card>
-      <CardContent>
-        <p>Hello from James</p>
-      </CardContent>
-    </Card>
+    <div className="max-w-md mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4 text-center">James Chatbot 🤖</h1>
+      
+      <Card className="mb-4 h-80 overflow-y-auto">
+        <CardContent className="space-y-2">
+          {messages.map((msg, idx) => (
+            <div
+              key={idx}
+              className={`p-2 rounded-md ${msg.from === "user" ? "bg-blue-100 text-right" : "bg-gray-100 text-left"}`}
+            >
+              {msg.text}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <div className="flex space-x-2">
+        <Input
+          placeholder="Type something..."
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleUserMessage(input)}
+        />
+        <Button onClick={() => handleUserMessage(input)}>Send</Button>
+      </div>
+
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        {conversationStarters.map((starter, idx) => (
+          <Button key={idx} variant="outline" onClick={() => handleUserMessage(starter)}>
+            {starter}
+          </Button>
+        ))}
+      </div>
+    </div>
   );
 }
-
-// ✅ Export after definition
-export default ChatBotJames;
