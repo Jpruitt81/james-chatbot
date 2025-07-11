@@ -1,71 +1,48 @@
-// ChatBotJames.jsx
-import { useState } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-
-const conversationStarters = [
-  "I'm feeling alone",
-  "Give me a daily affirmation",
-  "Do you have a journal prompt?",
-  "I need help calming down",
-  "Say something encouraging"
-];
-
-const responses = {
-  alone: "I'm here with you. You are not alone, even if it feels that way right now. It's okay to feel what you're feeling.",
-  affirmation: "You are enough. You are worthy of love and peace. Breathe and remind yourself of your strength.",
-  journal: "Write about a moment today that made you feel something deeply. Why did it move you?",
-  breathe: "Let's take a deep breath together. Inhale slowly through your nose for 4 counts... hold... and exhale through your mouth for 6 counts.",
-  encouragement: "You're doing better than you think. Keep going, one step at a time. You matter."
-};
-
 export default function ChatBotJames() {
-  const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
 
-  const handleUserMessage = (text) => {
-    const trimmed = text.trim().toLowerCase();
-    const match = Object.keys(responses).find(key => trimmed.includes(key)) || "encouragement";
-    const reply = responses[match];
+  const handleSend = (starter) => {
+    const userMessage = starter || input;
+    const lower = userMessage.toLowerCase();
 
-    setMessages(prev => [...prev, { from: "user", text }, { from: "bot", text: reply }]);
+    const botReply =
+      lower.includes("alone")
+        ? responses.alone
+        : lower.includes("affirmation")
+        ? responses.affirmation
+        : lower.includes("journal")
+        ? responses.journal
+        : lower.includes("calm")
+        ? responses.breathe
+        : lower.includes("encourage")
+        ? responses.encouragement
+        : "I'm here. Keep talking to me.";
+
+    setMessages([...messages, { from: "user", text: userMessage }, { from: "bot", text: botReply }]);
     setInput("");
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">James Chatbot 🤖</h1>
-      
-      <Card className="mb-4 h-80 overflow-y-auto">
-        <CardContent className="space-y-2">
-          {messages.map((msg, idx) => (
-            <div
-              key={idx}
-              className={`p-2 rounded-md ${msg.from === "user" ? "bg-blue-100 text-right" : "bg-gray-100 text-left"}`}
-            >
-              {msg.text}
-            </div>
-          ))}
-        </CardContent>
-      </Card>
-
-      <div className="flex space-x-2">
-        <Input
-          placeholder="Type something..."
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleUserMessage(input)}
-        />
-        <Button onClick={() => handleUserMessage(input)}>Send</Button>
-      </div>
-
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        {conversationStarters.map((starter, idx) => (
-          <Button key={idx} variant="outline" onClick={() => handleUserMessage(starter)}>
-            {starter}
+    <div style={{ padding: "2rem", maxWidth: "600px", margin: "0 auto", fontFamily: "sans-serif" }}>
+      <h1>James - Your Chat Companion</h1>
+      <div style={{ marginBottom: "1rem" }}>
+        {conversationStarters.map((text, index) => (
+          <Button key={index} onClick={() => handleSend(text)} style={{ margin: "0.25rem" }}>
+            {text}
           </Button>
         ))}
+      </div>
+      <div style={{ margin: "1rem 0", minHeight: "200px", background: "#f3f3f3", padding: "1rem", borderRadius: "8px" }}>
+        {messages.map((msg, idx) => (
+          <div key={idx} style={{ marginBottom: "0.5rem", textAlign: msg.from === "user" ? "right" : "left" }}>
+            <strong>{msg.from === "user" ? "You" : "James"}:</strong> {msg.text}
+          </div>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: "0.5rem" }}>
+        <Input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type here..." />
+        <Button onClick={() => handleSend()}>Send</Button>
       </div>
     </div>
   );
