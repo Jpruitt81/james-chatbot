@@ -143,27 +143,29 @@ export default function ChatBotJames() {
   }, [messages]);
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
-      <Card className="h-[500px] overflow-y-auto p-4">
-        <CardContent>
-          {messages.map((msg, i) => (
-            <div key={i} className={`my-2 ${msg.sender === 'bot' ? 'text-left' : 'text-right'}`}>
-              <div className={`inline-block px-4 py-2 rounded-xl max-w-xs ${msg.sender === 'bot' ? 'bg-gray-100 text-black' : 'bg-blue-600 text-white'}`}>
-                {msg.text}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-indigo-200 p-4">
+      <div className="w-full max-w-xl">
+        <Card className="h-[500px] overflow-y-auto p-4">
+          <CardContent>
+            {messages.map((msg, i) => (
+              <div key={i} className={`my-2 ${msg.sender === 'bot' ? 'text-left' : 'text-right'}`}>
+                <div className={`inline-block px-4 py-2 rounded-xl max-w-xs ${msg.sender === 'bot' ? 'bg-gray-100 text-black' : 'bg-blue-600 text-white'}`}>
+                  {msg.text}
+                </div>
               </div>
-            </div>
-          ))}
-          <div ref={chatEndRef} />
-        </CardContent>
-      </Card>
-      <div className="flex items-center mt-4 space-x-2">
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Type something..."
-        />
-        <Button onClick={handleSend}>Send</Button>
+            ))}
+            <div ref={chatEndRef} />
+          </CardContent>
+        </Card>
+        <div className="flex items-center mt-4 space-x-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            placeholder="Type something..."
+          />
+          <Button onClick={handleSend}>Send</Button>
+        </div>
       </div>
     </div>
   );
