@@ -1,8 +1,8 @@
 // Firebase setup
 import { useState, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -17,13 +17,13 @@ const firebaseConfig = {
   measurementId: "G-7H9F1CY0TV"
 };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+initializeApp(firebaseConfig);
+getAuth();
+getFirestore();
 
 function getReply(userMessage, prevMessages) {
   const lower = userMessage.toLowerCase();
-  const recentContext = prevMessages.slice(-3).map(m => m.text.toLowerCase()).join(" ");
+  const context = prevMessages.slice(-3).map(m => m.text.toLowerCase()).join(" ");
 
   if (lower.includes("affirmation")) {
     return "You are enough. You're doing your best, and that is more than okay.";
@@ -45,11 +45,11 @@ function getReply(userMessage, prevMessages) {
     return "That sounds really heavy. It’s okay to let it out here — I’m with you.";
   }
 
-  if (recentContext.includes("long day") || lower.includes("long day")) {
+  if (context.includes("long day") || lower.includes("long day")) {
     return "That’s rough. What made it feel long today?";
   }
 
-  if (lower.includes("people") || lower.includes("bother")) {
+  if (lower.includes("people") || lower.includes("bother") || lower.includes("drain")) {
     return "I get it — sometimes people can really drain your peace. Want to unpack that a bit?";
   }
 
@@ -57,7 +57,19 @@ function getReply(userMessage, prevMessages) {
     return "You’ve made it through every hard day so far — that’s proof of your strength.";
   }
 
-  return "I’m really listening. What happened that’s on your mind right now?";
+  if (lower.includes("bored")) {
+    return "Sometimes boredom hides deeper feelings. Want to explore what might really be going on?";
+  }
+
+  if (lower.includes("stuck") || lower.includes("lost") || lower.includes("direction") || lower.includes("don't know")) {
+    return "It’s okay to feel stuck. Tell me what’s been on your mind — we’ll walk through it together.";
+  }
+
+  if (lower.includes("help") || lower.includes("advice") || lower.includes("support")) {
+    return "I'm right here. What are you hoping to work through or understand better?";
+  }
+
+  return "I'm listening. Tell me more about what you're going through.";
 }
 
 export default function ChatBotJames() {
@@ -67,10 +79,10 @@ export default function ChatBotJames() {
 
   const handleSend = () => {
     if (!input.trim()) return;
-    const newMessage = { sender: "user", text: input };
-    const updatedMessages = [...messages, newMessage];
-    const botReply = { sender: "bot", text: getReply(input, updatedMessages) };
-    setMessages([...updatedMessages, botReply]);
+    const userMsg = { sender: "user", text: input };
+    const updated = [...messages, userMsg];
+    const botMsg = { sender: "bot", text: getReply(input, updated) };
+    setMessages([...updated, botMsg]);
     setInput("");
   };
 
@@ -82,9 +94,9 @@ export default function ChatBotJames() {
     <div className="p-4 max-w-xl mx-auto">
       <Card className="h-[500px] overflow-y-auto p-4">
         <CardContent>
-          {messages.map((msg, index) => (
-            <div key={index} className={`my-2 ${msg.sender === 'bot' ? 'text-left' : 'text-right'}`}>
-              <div className={`inline-block px-4 py-2 rounded-lg ${msg.sender === 'bot' ? 'bg-gray-200 text-black' : 'bg-blue-500 text-white'}`}>
+          {messages.map((msg, i) => (
+            <div key={i} className={`my-2 ${msg.sender === 'bot' ? 'text-left' : 'text-right'}`}>
+              <div className={`inline-block px-4 py-2 rounded-xl max-w-xs ${msg.sender === 'bot' ? 'bg-gray-100 text-black' : 'bg-blue-600 text-white'}`}>
                 {msg.text}
               </div>
             </div>
@@ -97,7 +109,7 @@ export default function ChatBotJames() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          placeholder="Type here..."
+          placeholder="Type something..."
         />
         <Button onClick={handleSend}>Send</Button>
       </div>
