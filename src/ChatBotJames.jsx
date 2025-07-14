@@ -23,57 +23,105 @@ getFirestore();
 
 function getReply(userMessage, prevMessages) {
   const lower = userMessage.toLowerCase();
-  const context = prevMessages.slice(-3).map(m => m.text.toLowerCase()).join(" ");
+  const context = prevMessages.map(m => m.text.toLowerCase()).join(" ");
+  const recentUserMsg = prevMessages.filter(m => m.sender === "user").slice(-1)[0]?.text.toLowerCase() || "";
+
+  const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
   if (lower.includes("affirmation")) {
-    return "You are enough. You're doing your best, and that is more than okay.";
+    return rand([
+      "You are enough. You’re doing better than you think.",
+      "You’ve survived 100% of your worst days — and that’s strength.",
+      "You matter. Even on the days you feel invisible."
+    ]);
   }
 
   if (lower.includes("journal")) {
-    return "Try this: What's one thing you're proud of today, no matter how small?";
+    return rand([
+      "Try this: What’s one thing you learned about yourself today?",
+      "Write down one moment that made you feel something — good or bad.",
+      "What’s something small that you’re grateful for right now?"
+    ]);
   }
 
   if (lower.includes("breathe") || lower.includes("anxious")) {
-    return "Let’s take a deep breath. Inhale... hold... exhale. You’re safe here.";
+    return rand([
+      "Let’s slow down. Inhale… hold… exhale. Do it again with me.",
+      "You're safe here. Let’s take a breath and be in this moment.",
+      "Ground yourself: look around and name 5 things you can see."
+    ]);
   }
 
   if (lower.includes("alone") || lower.includes("lonely")) {
-    return "I'm here with you. Want to talk about what’s weighing on you?";
+    return rand([
+      "I’m here with you. You’re not as alone as your thoughts tell you.",
+      "Loneliness hurts, I know. But I’m here — want to talk through it?",
+      "You can share anything with me. No judgment, just space to feel."
+    ]);
   }
 
   if (lower.includes("sad") || lower.includes("cry") || lower.includes("tired")) {
-    return "That sounds really heavy. It’s okay to let it out here — I’m with you.";
-  }
-
-  if (context.includes("long day") || lower.includes("long day")) {
-    return "That’s rough. What made it feel long today?";
-  }
-
-  if (lower.includes("people") || lower.includes("bother") || lower.includes("drain")) {
-    return "I get it — sometimes people can really drain your peace. Want to unpack that a bit?";
-  }
-
-  if (lower.includes("motivate") || lower.includes("encourage")) {
-    return "You’ve made it through every hard day so far — that’s proof of your strength.";
+    return rand([
+      "That sounds really heavy. I’m glad you’re letting it out here.",
+      "If you feel like crying, it’s okay. I’ll sit with you through it.",
+      "Exhaustion can come from carrying too much. Let’s unpack it if you want."
+    ]);
   }
 
   if (lower.includes("bored")) {
-    return "Sometimes boredom hides deeper feelings. Want to explore what might really be going on?";
+    return rand([
+      "Sometimes boredom masks burnout or sadness. What’s under the surface?",
+      "What’s something creative or silly you wish you had time to do?",
+      "Want me to give you a random journal prompt or affirmation?"
+    ]);
   }
 
   if (lower.includes("stuck") || lower.includes("lost") || lower.includes("direction") || lower.includes("don't know")) {
-    return "Sounds like you're carrying a lot. Want to talk through what's making you feel stuck?";
+    return rand([
+      "Feeling stuck is valid — want to talk about what’s keeping you there?",
+      "Let’s slow it down. What’s one thing you *do* know you want?",
+      "You don’t have to solve it all right now. Just take the next honest step."
+    ]);
   }
 
-  if (lower.includes("help") || lower.includes("advice") || lower.includes("support")) {
-    return "I'm right here. What are you hoping to work through or understand better?";
+  if (lower.includes("help") || lower.includes("support") || lower.includes("advice")) {
+    return rand([
+      "I'm right here. What’s something you wish someone would just *tell* you?",
+      "Let’s figure this out together. What’s one area you feel lost in?",
+      "Sometimes you don’t need answers — just someone to talk it through with. That’s me."
+    ]);
   }
 
-  if (context.includes("life") || context.includes("choices")) {
-    return "Making life choices can be so overwhelming. What’s one decision that’s weighing on you most right now?";
+  if (context.includes("life") || context.includes("choices") || recentUserMsg.includes("job")) {
+    return rand([
+      "Life choices are rarely clear-cut. What's your gut telling you — even a whisper?",
+      "Do you feel fear about change… or guilt about staying where you are?",
+      "You don’t have to decide everything now — just explore your truth."
+    ]);
   }
 
-  return "I'm hearing you — and I want to understand better. What else is on your mind?";
+  if (lower.includes("people") || lower.includes("draining") || lower.includes("bother")) {
+    return rand([
+      "It’s okay to admit people feel heavy sometimes. You don’t have to carry them.",
+      "You’re allowed to protect your peace — even from people you care about.",
+      "Let’s set a boundary together, even just in words. What do you wish you could say?"
+    ]);
+  }
+
+  if (lower.includes("motivate") || lower.includes("encourage")) {
+    return rand([
+      "You’re further than you were yesterday — and that’s progress.",
+      "Growth isn’t loud. It’s quiet, daily effort. Keep going.",
+      "Even when it’s hard, you’re still showing up. That’s your power."
+    ]);
+  }
+
+  return rand([
+    "I'm listening. What do you feel you need most right now?",
+    "Talk to me. There’s space here for everything you’re carrying.",
+    "I'm here with you. You can be raw, honest, or confused — I won’t turn away.",
+    "What’s one thing you wish someone would ask you about today?"
+  ]);
 }
 
 export default function ChatBotJames() {
