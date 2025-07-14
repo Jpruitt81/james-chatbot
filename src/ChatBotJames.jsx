@@ -62,14 +62,18 @@ function getReply(userMessage, prevMessages) {
   }
 
   if (lower.includes("stuck") || lower.includes("lost") || lower.includes("direction") || lower.includes("don't know")) {
-    return "It’s okay to feel stuck. Tell me what’s been on your mind — we’ll walk through it together.";
+    return "Sounds like you're carrying a lot. Want to talk through what's making you feel stuck?";
   }
 
   if (lower.includes("help") || lower.includes("advice") || lower.includes("support")) {
     return "I'm right here. What are you hoping to work through or understand better?";
   }
 
-  return "I'm listening. Tell me more about what you're going through.";
+  if (context.includes("life") || context.includes("choices")) {
+    return "Making life choices can be so overwhelming. What’s one decision that’s weighing on you most right now?";
+  }
+
+  return "I'm hearing you — and I want to understand better. What else is on your mind?";
 }
 
 export default function ChatBotJames() {
