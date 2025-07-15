@@ -62,7 +62,7 @@ function getReply(userMessage, prevMessages) {
 
   if (lower.includes("sad") || lower.includes("cry") || lower.includes("tired")) {
     return rand([
-      "That sounds really heavy. I’m glad you’re letting it out here.",
+      "That sounds heavy. I’m glad you’re letting it out here.",
       "If you feel like crying, it’s okay. I’ll sit with you through it.",
       "Exhaustion can come from carrying too much. Let’s unpack it if you want."
     ]);
